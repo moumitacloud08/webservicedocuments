@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions 
+		xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+		xmlns:tns="http://bharaththippireddy.com/userProfile" 
+		xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		name="UserProfileService" 
+		targetNamespace="http://bharaththippireddy.com/userProfile"
+		xmlns:upSchema="http://bharaththippireddy.com/userProfile/schema/UserProfile.xsd">
+ <!--This is where we define all tha data types which we need to exchange information for This
+ Particular web service-->	
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://bharaththippireddy.com/userProfile" elementFormDefault="qualified">
+	  <xsd:import  namespace="http://bharaththippireddy.com/userProfile/schema/UserProfile.xsd" schemaLocation="UserProfile.xsd"/>
+		<!--Request that will come in-->
+		<xsd:element name="GetUserProfile">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="userName" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+		</xsd:element>
+		<!--Response that will go back-->
+		<!--UserProfile is different schema which is imported(check xsd:import)-->
+	    <xsd:element name="GetUserProfileResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UserProfile" type="upSchema:UserProfile"/>
+			</xsd:sequence>
+		</xsd:complexType>
+		</xsd:element>
+    </xsd:schema>
+  </wsdl:types> 
+  <!--once we define all the types, we use the types in the second section in the 
+  abstract portion which is the messages-->
+  <!--Messages are analogous to parameters and return types in java-->
+  <wsdl:message name="GetUserProfileRequest">
+    <wsdl:part name="params" element="tns:GetUserProfile"/>
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileResponse">
+    <wsdl:part name="result" element="tns:GetUserProfileResponse"/>
+  </wsdl:message>
+  <!--Once messages are defined we use these messages to come up with the
+  operations which are analogous to the methods in java-->
+  <!--We put all the operations within portType-->
+  <wsdl:portType name="UserProfilePortType">
+    <wsdl:operation name="GetUserProfile">
+      <wsdl:input message="tns:GetUserProfileRequest"/>
+      <wsdl:output message="tns:GetUserProfileResponse"/>
+    </wsdl:operation>	
+  </wsdl:portType>  
+  <!--Abstract portion of the wsdl ends here, which tells what this web service provides-->
+  
+  <!--Physical portion starts with the binding element and it tells how
+  the consumer can consume this web service and how the provider is going 
+  to send the response back. So the binding element comprises of a soap:binding which bydefault
+  is document literal wrapped and that is the recommended binding because XML engines like Apache CXF--
+  can validate the entire soap messages when we use document literal binding-->  
+  <wsdl:binding name="UserProfileBinding" type="tns:UserProfilePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetUserProfile">
+      <soap:operation soapAction="urn:GetUserProfile"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <!--Once we define the binding the final the most import element is the service element
+which actually tells how to access this webservice , that actual URL inside a sub element called port  -->
+<!--We define a port for each webservice and a URL to access that webservice..You can have multiple webservices
+inside a single wsdl using multiple port elements-->
+  <wsdl:service name="UserProfileService">
+    <wsdl:port binding="tns:UserProfileBinding" name="UserProfilePort">
+		<soap:address location="http://localhost/services/UserProfileService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
